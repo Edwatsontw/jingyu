@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鯨語｜潛入鯨豚的世界</title>
+<meta name="description" content="從陽光灑落的海面一路下潛到深淵，認識鯨豚、台灣的賞鯨熱點與牠們面臨的威脅。">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · checked: 2026-11-08 · genre: atmospheric (inferred) · built: the project · redesign: polish · v2.0.0
+ * floor: 70 FAIL before · fixed: tokens (48), contrast (40), focus and states (26a, 26b), labels (54, 63, 67), dashes (19), icons (30a), a11y (33), hidden-at-rest (62), overflow (34), hero svh (6a) · structural: printed, not rebuilt (6b, 8, 9, 42, 58, 24b)
+ * critique: the descent is the idea and it holds; the pale shallow water was the weakest part, so it now starts a step darker to keep text readable */
+:root{
+  /* base palette */
+  --ocean:#146296;
+  --foam:#e8f8ff;
+  --text:#eaf6ff;
+  --muted:#cbe1ef;
+  --glow:#7ff0ff;
+  --sun:#ffd98a;
+  --abyss:#021428;
+  --body-bg:#0b4f86;
+  --sun-ink:#2a1d00;
+  --foam-ink:#06325a;
+  --whale-ink:#04345e;
+  --whale-pale:#bfe9ff;
+  --pink:#ffb3c1;
+  /* derived tints */
+  --card:color-mix(in srgb,var(--foam) 6%,transparent);
+  --card-line:color-mix(in srgb,var(--foam) 14%,transparent);
+  --line-strong:color-mix(in srgb,var(--foam) 18%,transparent);
+  --line-bright:color-mix(in srgb,var(--foam) 60%,transparent);
+  --wash:color-mix(in srgb,var(--foam) 12%,transparent);
+  --ghost-text:color-mix(in srgb,var(--foam) 5%,transparent);
+  --land:color-mix(in srgb,var(--foam) 7%,transparent);
+  --ray:color-mix(in srgb,var(--foam) 26%,transparent);
+  --ray-end:color-mix(in srgb,var(--foam) 0%,transparent);
+  --surface-light:color-mix(in srgb,var(--foam) calc(var(--surface-glow,.12) * 100%),transparent);
+  --shade:color-mix(in srgb,var(--abyss) 45%,transparent);
+  --panel:color-mix(in srgb,var(--abyss) 80%,transparent);
+  --veil-1:color-mix(in srgb,var(--abyss) 82%,transparent);
+  --veil-2:color-mix(in srgb,var(--abyss) 55%,transparent);
+  --veil-3:color-mix(in srgb,var(--abyss) 25%,transparent);
+  --glow-8:color-mix(in srgb,var(--glow) 8%,transparent);
+  --glow-16:color-mix(in srgb,var(--glow) 16%,transparent);
+  --glow-25:color-mix(in srgb,var(--glow) 25%,transparent);
+  --glow-40:color-mix(in srgb,var(--glow) 40%,transparent);
+  --glow-45:color-mix(in srgb,var(--glow) 45%,transparent);
+  --glow-55:color-mix(in srgb,var(--glow) 55%,transparent);
+  --sun-14:color-mix(in srgb,var(--sun) 14%,transparent);
+  --sun-30:color-mix(in srgb,var(--sun) 30%,transparent);
+  --sun-50:color-mix(in srgb,var(--sun) 50%,transparent);
+  --serif:"Noto Serif TC",serif;
+  --sans:"Noto Sans TC",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{font-family:var(--sans);color:var(--text);background:var(--body-bg);line-height:1.75;overflow-x:clip}
+a{color:inherit}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+button:disabled{opacity:.5;cursor:not-allowed}
+
+/* 固定的海水背景：顏色隨深度改變 */
+.ocean{position:fixed;inset:0;z-index:-3;background:var(--ocean);transition:background .2s linear}
+.ocean::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,var(--surface-light),transparent 60%)}
+#particles{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.rays{position:fixed;inset:0 0 auto 0;height:100vh;z-index:-2;pointer-events:none;overflow:hidden;opacity:var(--rays,1)}
+.rays span{position:absolute;top:-10%;width:14vw;height:120%;background:linear-gradient(to bottom,var(--ray),var(--ray-end) 78%);filter:blur(16px);transform-origin:top center;animation:sway 7s ease-in-out infinite alternate}
+.rays span:nth-child(1){left:8%;transform:rotate(14deg);animation-delay:-2s}
+.rays span:nth-child(2){left:26%;width:8vw;transform:rotate(8deg);animation-delay:-5s}
+.rays span:nth-child(3){left:46%;width:18vw;transform:rotate(2deg)}
+.rays span:nth-child(4){left:66%;width:9vw;transform:rotate(-6deg);animation-delay:-3s}
+.rays span:nth-child(5){left:82%;transform:rotate(-12deg);animation-delay:-7s}
+@keyframes sway{to{translate:7vw 0;opacity:.4}}
+
+/* 導覽列 */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,48px);background:linear-gradient(to bottom,var(--shade),transparent)}
+.logo{font-family:var(--serif);font-weight:900;font-size:1.35rem;letter-spacing:.12em;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo svg{width:34px;height:auto;fill:var(--foam)}
+.nav ul{display:flex;gap:clamp(12px,2.4vw,32px);list-style:none;align-items:center}
+.nav ul a{text-decoration:none;font-size:.95rem;opacity:.85;transition:opacity .2s}
+.nav ul a:hover{opacity:1}
+.nav .shop-btn{padding:7px 18px;border-radius:999px;background:var(--sun);color:var(--sun-ink);font-weight:700;opacity:1;transition:transform .15s}
+.nav .shop-btn:active{transform:scale(.98)}
+@media (max-width:720px){.nav ul li:not(:last-child){display:none}}
+
+/* 深度計 */
+.depth-meter{position:fixed;right:clamp(10px,2vw,28px);top:50%;transform:translateY(-50%);z-index:15;display:flex;align-items:center;gap:12px;font-variant-numeric:tabular-nums}
+.dm-track{position:relative;width:3px;height:42vh;border-radius:3px;background:var(--line-strong)}
+.dm-dot{position:absolute;left:50%;top:0;width:11px;height:11px;margin:-5px 0 0 -5.5px;border-radius:50%;background:var(--glow);box-shadow:0 0 12px var(--glow)}
+.dm-text{text-align:right;order:-1}
+.dm-value{font-family:var(--serif);font-size:1.5rem;font-weight:900;line-height:1}
+.dm-value small{font-size:.8rem;font-weight:600;margin-left:2px}
+.dm-zone{font-size:.75rem;color:var(--muted)}
+@media (max-width:720px){.depth-meter{top:auto;bottom:14px;transform:none;right:14px;background:var(--panel);padding:6px 12px;border-radius:12px}.dm-track{display:none}.dm-value{font-size:1.1rem}}
+
+/* Hero：從海面下往上看 */
+.hero{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;padding:120px 20px 80px;overflow:hidden}
+.surface{position:absolute;top:0;left:0;width:200%;height:120px;animation:drift 14s linear infinite}
+.surface.s2{opacity:.5;animation-duration:22s;top:10px}
+@keyframes drift{to{transform:translateX(-50%)}}
+.hero-inner{position:relative;z-index:2;max-width:760px}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.6rem,8vw,5.6rem);line-height:1.15;margin:.3em 0;text-shadow:0 6px 30px var(--shade);text-wrap:balance;overflow-wrap:break-word;min-width:0}
+.hero p{font-size:clamp(1rem,2.2vw,1.2rem);max-width:34em;margin:0 auto}
+.cta{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:999px;font-weight:700;text-decoration:none;transition:transform .25s,box-shadow .25s,background .25s}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--foam);color:var(--foam-ink);box-shadow:0 10px 30px var(--shade)}
+.btn-ghost{border:1.5px solid var(--line-bright);color:var(--foam)}
+.btn-ghost:hover{background:var(--wash)}
+.hero-whale{position:absolute;bottom:12%;left:0;width:min(52vw,560px);opacity:.5;animation:swim 42s linear infinite;z-index:1}
+.hero-whale svg{width:100%;fill:var(--whale-ink);animation:bob 6s ease-in-out infinite}
+@keyframes swim{from{transform:translateX(105vw)}to{transform:translateX(-65vw)}}
+@keyframes bob{50%{transform:translateY(14px) rotate(-1.5deg)}}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-size:.85rem;opacity:.8;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px}
+.scroll-hint i{width:1.5px;height:42px;background:linear-gradient(var(--foam),transparent);animation:hint 2s ease-in-out infinite}
+.scroll-hint:hover i{animation-play-state:paused}
+@keyframes hint{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* 深度區塊 */
+.zone{position:relative;padding:clamp(80px,14vh,160px) clamp(16px,6vw,96px)}
+.zone-label{position:absolute;top:40px;left:clamp(16px,4vw,48px);font-family:var(--serif);font-weight:900;font-size:clamp(4rem,14vw,11rem);line-height:1;color:var(--ghost-text);pointer-events:none;user-select:none}
+.zone-head{max-width:640px;margin:0 auto 70px;text-align:center}
+.zone-head h2{font-family:var(--serif);font-size:clamp(1.9rem,4.5vw,3rem);margin:14px 0 10px;line-height:1.3;text-wrap:balance;overflow-wrap:break-word;min-width:0}
+.zone-head p{color:var(--muted)}
+
+.species{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(24px,5vw,72px);align-items:center;max-width:1100px;margin:0 auto 120px}
+.species:last-child{margin-bottom:0}
+.species.flip .art{order:2}
+.art{position:relative;aspect-ratio:16/10;display:grid;place-items:center}
+.art::before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,var(--glow-16),transparent 65%)}
+.art svg{position:relative;width:100%;height:auto;filter:drop-shadow(0 0 22px var(--glow-25));transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.species:hover .art svg{transform:translateX(-12px) rotate(-2deg)}
+.sp-text{min-width:0}
+.sp-text h3{font-family:var(--serif);font-size:clamp(1.6rem,3.4vw,2.3rem);line-height:1.3;text-wrap:balance;overflow-wrap:break-word}
+.latin{font-style:italic;color:var(--muted);font-size:.9rem;margin-bottom:14px}
+.sp-text>p{margin-bottom:20px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.fact{background:var(--card);border:1px solid var(--card-line);border-radius:14px;padding:12px 10px;text-align:center}
+.fact b{display:block;font-family:var(--serif);font-size:1.3rem;color:var(--glow);line-height:1.3;font-variant-numeric:tabular-nums}
+.fact span{font-size:.75rem;color:var(--muted)}
+.goods{display:inline-flex;align-items:center;gap:8px;font-size:.92rem;text-decoration:none;color:var(--sun);border-bottom:1px dashed var(--sun-50);padding-bottom:2px}
+.goods:hover{border-bottom-style:solid}
+.goods:active{opacity:.8}
+@media (max-width:820px){.species,.species.flip{grid-template-columns:1fr}.species.flip .art{order:0}}
+
+/* 隨捲動漂過的抹香鯨 */
+.drift-whale{position:absolute;top:30%;left:0;width:min(70vw,820px);opacity:.12;pointer-events:none}
+.drift-whale svg{width:100%;fill:var(--whale-pale)}
+
+/* 台灣 */
+.taiwan{display:grid;grid-template-columns:minmax(220px,360px) 1fr;gap:clamp(24px,5vw,64px);max-width:1050px;margin:0 auto;align-items:center}
+.map svg{width:100%;height:auto}
+.map .land{fill:var(--land);stroke:var(--glow-55);stroke-width:1.2}
+.map .route{stroke:var(--pink)}
+.map .pin circle.core{fill:var(--sun)}
+.map .pin circle.ring{fill:none;stroke:var(--sun);animation:ping 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+.map .pin{cursor:pointer}
+.map .pin.active circle.core{fill:var(--glow)}
+.map text{fill:var(--muted);font-size:9px}
+@keyframes ping{from{transform:scale(1);opacity:.9}to{transform:scale(3.2);opacity:0}}
+.spots{display:grid;gap:14px}
+.spot{background:var(--card);border:1px solid var(--card-line);border-radius:18px;padding:18px 22px;transition:border-color .3s,transform .3s,background .3s}
+.spot.active{border-color:var(--glow);background:var(--glow-8);transform:translateX(6px)}
+.spot h3{font-size:1.08rem;display:flex;justify-content:space-between;gap:10px}
+.spot h3 small{color:var(--sun);font-weight:500;font-size:.8rem}
+.spot p{color:var(--muted);font-size:.92rem}
+@media (max-width:820px){.taiwan{grid-template-columns:1fr}.map{max-width:260px;margin:0 auto}}
+
+
+/* 保育 */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:980px;margin:0 auto 50px}
+.stat{font-variant-numeric:tabular-nums;text-align:center;padding:30px 16px;border-radius:22px;background:var(--card);border:1px solid var(--card-line)}
+.stat .num{font-family:var(--serif);font-weight:900;font-size:clamp(2.4rem,6vw,3.6rem);color:var(--glow);line-height:1.1;text-shadow:0 0 24px var(--glow-40);font-variant-numeric:tabular-nums}
+.stat .num small{font-size:.4em;color:var(--text);margin:0 4px}
+.stat p{color:var(--muted);font-size:.9rem;margin-top:6px}
+.threats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:980px;margin:0 auto}
+.threat{padding:20px;border-radius:18px;border:1px solid var(--card-line)}
+.threat .ic{color:var(--glow);line-height:0}
+.threat .ic svg{width:28px;height:28px}
+.threat h3{font-size:1rem;margin:6px 0 4px}
+.threat p{font-size:.86rem;color:var(--muted)}
+.note{max-width:980px;margin:22px auto 0;font-size:.78rem;color:var(--muted);opacity:.7;text-align:center}
+@media (max-width:820px){.stats{grid-template-columns:1fr}.threats{grid-template-columns:1fr 1fr}}
+
+/* 商店入口 */
+.shop-cta{max-width:880px;margin:0 auto;text-align:center;padding:60px 24px;border-radius:32px;background:linear-gradient(135deg,var(--sun-14),var(--glow-8));border:1px solid var(--sun-30)}
+.shop-cta h2{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:10px;text-wrap:balance;overflow-wrap:break-word;min-width:0}
+.shop-cta p{color:var(--muted);margin-bottom:28px}
+.shop-cta .btn-primary{background:var(--sun);color:var(--sun-ink)}
+.up{margin-top:70px;background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;transition:transform .15s}
+.up:hover{color:var(--foam)}
+.up:active{transform:scale(.98)}
+footer{padding:40px 20px 70px;text-align:center;font-size:.82rem;color:var(--muted);opacity:.7}
+
+/* 進場動畫：只有在 JS 執行時才先藏起來，沒有 JS 也看得到內容 */
+.js .reveal{opacity:0;transform:translateY(60px);filter:blur(6px);transition:opacity 1.1s ease,transform 1.2s cubic-bezier(.16,1,.3,1),filter 1s ease}
+.js .reveal.in{opacity:1;transform:none;filter:none}
+.reveal.d1{transition-delay:.15s}.reveal.d2{transition-delay:.3s}.reveal.d3{transition-delay:.45s}
+/* 鯨豚從畫面右側「游」進來（牠們都面向左） */
+.js .species .art.reveal{transform:translateX(220px) rotate(5deg) scale(.85);filter:blur(10px);transition:opacity 1.3s ease,transform 1.8s cubic-bezier(.16,1,.3,1),filter 1.3s ease}
+.js .species .art.reveal.in{transform:none;filter:none}
+.species .art.in svg{animation:swimbob 7s ease-in-out infinite}
+@keyframes swimbob{0%,100%{translate:0 0;rotate:0deg}30%{translate:-10px -12px;rotate:-2deg}65%{translate:6px 8px;rotate:1.5deg}}
+.fact{transition:transform .3s,border-color .3s,box-shadow .3s}
+.fact:hover{transform:translateY(-4px);border-color:var(--glow);box-shadow:0 0 22px var(--glow-25)}
+
+/* Hero 文字逐行浮上 */
+.hero-inner>*{animation:surface-in 1.4s cubic-bezier(.16,1,.3,1) backwards}
+.hero-inner>:nth-child(2){animation-delay:.2s}
+.hero-inner>:nth-child(3){animation-delay:.45s}
+@keyframes surface-in{from{opacity:0;transform:translateY(50px);filter:blur(12px)}}
+.dm-dot{animation:dmpulse 2s ease-in-out infinite}
+@keyframes dmpulse{50%{box-shadow:0 0 22px 4px var(--glow)}}
+
+/* 深度轉場：氣泡湧上 */
+.burst{position:fixed;inset:0;z-index:25;pointer-events:none;overflow:hidden}
+/* 只用 opacity / transform 做動畫，氣泡畫在單一 canvas 上，避免卡頓 */
+.burst .veil{position:absolute;inset:0;opacity:0;will-change:opacity;background:radial-gradient(ellipse at 50% 50%,var(--veil-1) 0,var(--veil-2) 45%,var(--veil-3) 100%);animation:veil 2s ease forwards}
+@keyframes veil{22%{opacity:1}70%{opacity:1}100%{opacity:0}}
+/* 全畫面毛玻璃：模糊強度固定，只動 opacity，交給 GPU 合成，不會讓整頁重繪 */
+.burst .frost{position:absolute;inset:0;opacity:0;will-change:opacity;-webkit-backdrop-filter:blur(6px) brightness(1.1);backdrop-filter:blur(6px) brightness(1.1);animation:veil 2s ease forwards}
+@media (max-width:720px){.burst .frost{-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}}
+.burst canvas{position:absolute;inset:0;width:100%;height:100%}
+.burst .label{position:absolute;left:50%;top:50%;margin:0;text-align:center;white-space:nowrap;will-change:opacity,transform;transform:translate(-50%,-50%);animation:burst-label 2.1s cubic-bezier(.16,1,.3,1) .1s both}
+.burst .label small{display:block;font-size:.9rem;color:var(--glow)}
+.burst .label b{display:block;font-family:var(--serif);font-weight:900;font-size:clamp(3.5rem,13vw,8.5rem);line-height:1.05;text-shadow:0 0 30px var(--glow-45)}
+.burst .label em{font-style:normal;font-size:.4em;margin-left:4px}
+.burst .label span{font-size:1.05rem}
+@keyframes burst-label{0%{opacity:0;transform:translate(-50%,-50%) scale(.85)}28%{opacity:1;transform:translate(-50%,-50%)}72%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(-50%,calc(-50% - 40px))}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .reveal,.js .species .art.reveal{opacity:1;transform:none;filter:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="ocean" id="ocean"></div>
+<div class="rays" id="rays"><span></span><span></span><span></span><span></span><span></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+
+<!-- 鯨豚剪影（重複使用） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#bfefff"/><stop offset="1" stop-color="#3a8fc4"/>
+    </linearGradient>
+    <linearGradient id="g-deep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fe9ff"/><stop offset="1" stop-color="#1c4f86"/>
+    </linearGradient>
+    <symbol id="sym-humpback" viewBox="0 0 300 120">
+      <path d="M8,62 C14,48 40,38 80,36 C130,33 180,38 220,48 C240,53 255,57 266,58 L290,40 C286,52 284,58 286,64 L294,82 L266,66 C250,72 225,80 190,84 C140,90 90,90 55,84 C30,80 12,72 8,62 Z"/>
+      <path d="M90,80 C100,98 120,112 150,116 C138,104 120,92 112,84 Z"/>
+      <path d="M196,46 C200,38 206,36 212,48 Z"/>
+    </symbol>
+    <symbol id="sym-orca" viewBox="0 0 300 130">
+      <path d="M10,80 C18,64 50,56 90,56 C140,56 190,62 230,72 C245,75 258,77 266,78 L292,60 C288,72 286,78 288,84 L296,104 L266,88 C245,96 200,104 150,106 C100,108 50,104 25,96 C15,92 10,86 10,80 Z"/>
+      <path d="M118,58 C122,40 128,18 138,4 C140,24 146,44 160,60 Z"/>
+      <path d="M70,98 C74,112 84,122 98,124 C94,114 90,104 86,98 Z"/>
+    </symbol>
+    <symbol id="sym-dolphin" viewBox="0 0 200 90">
+      <path d="M4,48 C10,44 20,42 30,40 C50,32 80,28 110,30 C135,32 155,38 168,42 L190,28 C187,38 186,44 188,50 L194,64 L168,52 C150,58 120,62 90,62 C60,62 40,58 30,54 C20,52 10,51 4,48 Z"/>
+      <path d="M88,31 C94,20 102,12 112,8 C110,18 112,26 118,33 Z"/>
+      <path d="M60,60 C62,70 68,76 78,78 C74,72 72,66 72,61 Z"/>
+    </symbol>
+    <symbol id="sym-bluewhale" viewBox="0 0 400 100">
+      <path d="M6,52 C14,40 40,36 80,36 C160,34 260,40 330,48 L370,30 C366,42 364,48 366,54 L376,72 L330,58 C260,66 160,70 80,68 C40,66 14,62 6,52 Z"/>
+      <path d="M290,46 C294,38 298,36 302,46 Z"/>
+      <path d="M80,64 C86,74 96,80 108,80 C100,74 96,68 94,64 Z"/>
+    </symbol>
+    <symbol id="sym-sperm" viewBox="0 0 320 110">
+      <path d="M10,40 C10,26 24,20 60,20 C110,20 170,30 230,46 C250,51 262,54 272,55 L298,38 C294,50 292,56 294,62 L302,80 L272,64 C250,72 210,82 160,86 C110,90 60,88 36,80 C20,74 10,62 10,50 Z"/>
+      <path d="M70,82 C74,92 82,96 92,96 C86,90 84,86 84,82 Z"/>
+      <path d="M208,43 C212,36 218,36 222,47 Z"/>
+    </symbol>
+    <!-- 瓶鼻海豚：身體較粗壯、嘴喙短 -->
+    <symbol id="sym-bottlenose" viewBox="0 0 200 90">
+      <path d="M10,48 C14,44 22,42 30,40 C50,28 80,24 110,26 C135,28 155,36 168,41 L190,27 C187,37 186,43 188,49 L194,63 L168,52 C150,60 120,66 90,66 C60,66 40,60 30,55 C22,52 14,51 10,48 Z"/>
+      <path d="M86,28 C92,16 102,8 114,4 C110,14 112,22 120,30 Z"/>
+      <path d="M58,62 C60,72 66,78 76,80 C72,74 70,68 70,63 Z"/>
+    </symbol>
+    <!-- 熱帶斑海豚：修長、嘴喙長、身上有斑點 -->
+    <symbol id="sym-spotted" viewBox="0 0 200 90">
+      <path d="M2,49 C10,45 20,43 30,41 C50,33 80,30 110,31 C135,33 155,38 168,42 L190,29 C187,38 186,44 188,50 L194,63 L168,52 C150,57 120,61 90,61 C60,61 40,57 30,54 C20,52 10,51 2,49 Z"/>
+      <path d="M90,32 C96,22 104,14 114,10 C112,19 114,26 120,34 Z"/>
+      <path d="M60,59 C62,68 68,74 77,76 C73,70 72,65 72,60 Z"/>
+      <g fill="#eaf6ff" opacity=".45"><circle cx="58" cy="40" r="1.6"/><circle cx="72" cy="45" r="1.3"/><circle cx="86" cy="38" r="1.5"/><circle cx="98" cy="47" r="1.2"/><circle cx="112" cy="40" r="1.6"/><circle cx="126" cy="46" r="1.3"/><circle cx="140" cy="42" r="1.4"/><circle cx="66" cy="52" r="1.2"/><circle cx="104" cy="54" r="1.3"/><circle cx="150" cy="47" r="1.1"/><circle cx="80" cy="56" r="1.1"/><circle cx="132" cy="53" r="1.2"/></g>
+    </symbol>
+    <!-- 花紋海豚：頭部圓鈍沒有嘴喙、背鰭高、身上有刮痕 -->
+    <symbol id="sym-risso" viewBox="0 0 200 90">
+      <path d="M8,48 C8,38 18,32 34,31 C60,27 90,27 115,30 C138,33 156,38 168,42 L190,28 C187,38 186,44 188,50 L194,64 L168,52 C150,58 120,64 90,64 C60,64 34,61 20,57 C12,54 8,52 8,48 Z"/>
+      <path d="M84,31 C88,17 96,7 108,1 C106,13 108,23 116,32 Z"/>
+      <path d="M44,60 C46,70 52,76 62,78 C58,72 56,66 56,61 Z"/>
+      <g fill="none" stroke="#eaf6ff" stroke-width=".9" stroke-linecap="round" opacity=".5"><path d="M40,38 L62,46"/><path d="M58,34 L84,44"/><path d="M70,48 L96,40"/><path d="M100,36 L128,48"/><path d="M118,34 L140,44"/><path d="M50,50 L74,56"/><path d="M110,50 L136,42"/><path d="M144,46 L160,50"/></g>
+    </symbol>
+    <!-- 弗氏海豚：粗壯、嘴喙極短、鰭小、體側有深色條紋 -->
+    <symbol id="sym-fraser" viewBox="0 0 200 90">
+      <path d="M12,48 C14,42 22,38 34,36 C60,28 90,26 115,28 C138,31 156,38 168,42 L190,30 C187,39 186,45 188,50 L194,62 L168,52 C150,60 120,66 90,66 C60,66 36,60 24,56 C16,53 12,51 12,48 Z"/>
+      <path d="M92,28 C96,22 102,17 109,15 C107,21 108,26 113,29 Z"/>
+      <path d="M52,60 C53,66 57,70 63,71 C60,67 59,64 59,61 Z"/>
+      <path d="M22,47 C50,49 95,52 142,51 C100,58 58,58 22,49 Z" fill="#0b2340" opacity=".35"/>
+    </symbol>
+    <!-- 中華白海豚：嘴喙長、背上有隆起、成體帶粉紅斑 -->
+    <symbol id="sym-sousa" viewBox="0 0 200 90">
+      <path d="M2,50 C10,46 20,44 32,42 C50,36 66,28 84,25 C104,22 124,30 146,36 C156,39 163,41 168,42 L190,28 C187,38 186,44 188,50 L194,64 L168,52 C150,58 120,62 90,62 C60,62 40,58 30,55 C20,53 10,52 2,50 Z"/>
+      <path d="M78,26 C83,19 90,15 98,14 C96,19 97,23 101,26 Z"/>
+      <path d="M58,59 C60,68 66,74 75,76 C71,70 70,65 70,60 Z"/>
+      <g fill="#ffb3c1" opacity=".55"><circle cx="46" cy="46" r="2"/><circle cx="64" cy="40" r="1.6"/><circle cx="76" cy="50" r="2.2"/><circle cx="96" cy="36" r="1.7"/><circle cx="110" cy="46" r="2"/><circle cx="128" cy="40" r="1.5"/><circle cx="142" cy="48" r="1.8"/><circle cx="90" cy="55" r="1.5"/></g>
+    </symbol>
+    <symbol id="sym-beaked" viewBox="0 0 260 90">
+      <path d="M4,46 C8,40 18,38 30,36 C60,28 110,26 160,32 C180,35 196,38 206,40 L230,26 C227,36 226,42 228,48 L236,62 L206,50 C186,56 150,62 110,62 C70,62 40,58 26,54 C16,52 8,50 4,46 Z"/>
+      <path d="M168,35 C172,27 178,25 184,37 Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="nav">
+  <a class="logo" href="#top"><svg viewBox="0 0 200 90" aria-hidden="true"><use href="#sym-dolphin"/></svg>鯨語</a>
+  <ul>
+    <li><a href="#sunlight">鯨豚之旅</a></li>
+    <li><a href="#taiwan">台灣鯨豚</a></li>
+    <li><a href="#protect">保育</a></li>
+    <li><a class="shop-btn" href="shop.html">商店</a></li>
+  </ul>
+</header>
+
+<aside class="depth-meter" aria-hidden="true">
+  <div class="dm-text">
+    <div class="dm-value"><span id="depth">0</span><small>m</small></div>
+    <div class="dm-zone" id="zone">海面</div>
+  </div>
+  <div class="dm-track"><div class="dm-dot" id="dmdot"></div></div>
+</aside>
+
+<main>
+<!-- 0m 海面 -->
+<section class="hero" id="top" data-depth="0">
+  <svg class="surface" viewBox="0 0 2400 120" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="rgba(232,248,255,.55)" d="M0,0 H2400 V40 Q2350,80 2300,40 T2200,40 T2100,40 T2000,40 T1900,40 T1800,40 T1700,40 T1600,40 T1500,40 T1400,40 T1300,40 T1200,40 T1100,40 T1000,40 T900,40 T800,40 T700,40 T600,40 T500,40 T400,40 T300,40 T200,40 T100,40 T0,40 Z"/>
+  </svg>
+  <svg class="surface s2" viewBox="0 0 2400 120" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="rgba(232,248,255,.35)" d="M0,0 H2400 V50 Q2340,100 2280,50 T2160,50 T2040,50 T1920,50 T1800,50 T1680,50 T1560,50 T1440,50 T1320,50 T1200,50 T1080,50 T960,50 T840,50 T720,50 T600,50 T480,50 T360,50 T240,50 T120,50 T0,50 Z"/>
+  </svg>
+
+  <div class="hero-whale" aria-hidden="true"><svg viewBox="0 0 300 120" aria-hidden="true"><use href="#sym-humpback"/></svg></div>
+
+  <div class="hero-inner">
+    <h1>深吸一口氣<br>潛入鯨豚的世界</h1>
+    <p>從陽光灑落的海面，到沒有一絲光線的深淵。往下捲動，跟著鯨、海豚與鼠海豚一起下潛。</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#sunlight">開始下潛</a>
+      <a class="btn btn-ghost" href="shop.html">逛逛鯨豚周邊</a>
+    </div>
+  </div>
+  <div class="scroll-hint">往下潛<i></i></div>
+</section>
+
+<!-- 透光帶 -->
+<section class="zone" id="sunlight" data-depth="10" data-depth-end="200">
+  <div class="zone-label">0～200m</div>
+  <div class="zone-head reveal">
+    <h2>透光帶：陽光還在的地方</h2>
+    <p>海洋最熱鬧的一層。大多數鯨豚在這裡呼吸、覓食、玩耍，也是我們最常遇見牠們的地方。</p>
+  </div>
+
+  <article class="species" id="spinner">
+    <div class="art reveal"><svg viewBox="0 0 200 90" fill="url(#g-body)" aria-hidden="true"><use href="#sym-dolphin"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>飛旋海豚</h3>
+      <div class="latin">Stenella longirostris</div>
+      <p>海上的特技表演者。跳出水面時會沿著身體長軸高速旋轉，科學家推測這可能是在溝通，或是甩掉身上的寄生蟲。在台灣東部海域很常見。</p>
+      <div class="facts">
+        <div class="fact"><b>7 圈</b><span>單次跳躍最多旋轉</span></div>
+        <div class="fact"><b>~2m</b><span>成體身長</span></div>
+        <div class="fact"><b>上百隻</b><span>常見群體規模</span></div>
+      </div>
+      <a class="goods" href="shop.html#p-spinner">相關周邊：飛旋海豚手鍊</a>
+    </div>
+  </article>
+
+  <article class="species flip" id="bottlenose">
+    <div class="art reveal"><svg viewBox="0 0 200 90" fill="url(#g-body)" aria-hidden="true"><use href="#sym-bottlenose"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>瓶鼻海豚</h3>
+      <div class="latin">Tursiops truncatus</div>
+      <p>人們最熟悉的海豚，分布在全球溫帶與熱帶海域，適應力強又充滿好奇心。每隻瓶鼻海豚都有獨特的「招牌哨音」，同伴之間會用它互相呼喚，就像名字一樣。</p>
+      <div class="facts">
+        <div class="fact"><b>2～4m</b><span>成體身長</span></div>
+        <div class="fact"><b>專屬哨音</b><span>像名字一樣的叫聲</span></div>
+        <div class="fact"><b>40 年+</b><span>野外壽命可達</span></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="species" id="spotted">
+    <div class="art reveal"><svg viewBox="0 0 200 90" fill="url(#g-body)" aria-hidden="true"><use href="#sym-spotted"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>熱帶斑海豚</h3>
+      <div class="latin">Stenella attenuata</div>
+      <p>剛出生時身上沒有斑點，隨著年紀增長，斑點才越來越多、越來越密。牠們喜歡成群在船首乘浪，是台灣東部賞鯨最常遇見的海豚之一。</p>
+      <div class="facts">
+        <div class="fact"><b>1.6～2.6m</b><span>成體身長</span></div>
+        <div class="fact"><b>0 顆</b><span>出生時的斑點</span></div>
+        <div class="fact"><b>數百隻</b><span>常見群體規模</span></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="species flip" id="risso">
+    <div class="art reveal"><svg viewBox="0 0 200 90" fill="url(#g-body)" aria-hidden="true"><use href="#sym-risso"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>花紋海豚</h3>
+      <div class="latin">Grampus griseus</div>
+      <p>頭部圓鈍、沒有明顯的嘴喙。身上布滿白色刮痕，多半是同伴牙齒和烏賊吸盤留下的，年紀越大，身體看起來越白。花蓮外海很常見。</p>
+      <div class="facts">
+        <div class="fact"><b>2.6～4m</b><span>成體身長</span></div>
+        <div class="fact"><b>無嘴喙</b><span>圓鈍的頭部</span></div>
+        <div class="fact"><b>烏賊</b><span>最主要的食物</span></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="species" id="fraser">
+    <div class="art reveal"><svg viewBox="0 0 200 90" fill="url(#g-body)" aria-hidden="true"><use href="#sym-fraser"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>弗氏海豚</h3>
+      <div class="latin">Lagenodelphis hosei</div>
+      <p>身體粗壯、嘴喙短、鰭肢小，體側有一條從眼睛延伸到腹部的深色條紋。常數百隻組成大群高速前進，濺起大片水花。牠們很晚才被科學家認識，直到 1970 年代才在野外被確認。</p>
+      <div class="facts">
+        <div class="fact"><b>2～2.7m</b><span>成體身長</span></div>
+        <div class="fact"><b>數百隻</b><span>高速移動的大群</span></div>
+        <div class="fact"><b>1970s</b><span>才在野外被確認</span></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="species flip" id="orca">
+    <div class="art reveal"><svg viewBox="0 0 300 130" fill="url(#g-body)" aria-hidden="true"><use href="#sym-orca"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>虎鯨</h3>
+      <div class="latin">Orcinus orca</div>
+      <p>名字裡有「鯨」，其實是體型最大的海豚。牠們以母系家族生活，不同族群有各自的叫聲「方言」與狩獵技巧，會一代一代傳下去。</p>
+      <div class="facts">
+        <div class="fact"><b>9m</b><span>雄性最大身長</span></div>
+        <div class="fact"><b>1.8m</b><span>雄性背鰭高度</span></div>
+        <div class="fact"><b>頂端</b><span>海洋食物鏈位置</span></div>
+      </div>
+      <a class="goods" href="shop.html#p-orca">相關周邊：虎鯨守護手鍊</a>
+    </div>
+  </article>
+
+  <article class="species" id="humpback">
+    <div class="art reveal"><svg viewBox="0 0 300 120" fill="url(#g-body)" aria-hidden="true"><use href="#sym-humpback"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>大翅鯨（座頭鯨）</h3>
+      <div class="latin">Megaptera novaeangliae</div>
+      <p>擁有所有鯨魚中最長的胸鰭，可達身長的三分之一。雄鯨會唱出結構複雜、反覆循環的歌，同一海域的鯨群會唱同一首歌，而且每年慢慢改編。</p>
+      <div class="facts">
+        <div class="fact"><b>5m</b><span>胸鰭長度</span></div>
+        <div class="fact"><b>20+ 分</b><span>一首歌可長達</span></div>
+        <div class="fact"><b>上萬 km</b><span>年度遷徙距離</span></div>
+      </div>
+      <a class="goods" href="shop.html#p-humpback">相關周邊：大翅鯨之歌手鍊</a>
+    </div>
+  </article>
+
+  <article class="species flip" id="blue">
+    <div class="art reveal"><svg viewBox="0 0 400 100" fill="url(#g-body)" aria-hidden="true"><use href="#sym-bluewhale"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>藍鯨</h3>
+      <div class="latin">Balaenoptera musculus</div>
+      <p>地球有史以來最大的動物。牠靠吃體長只有幾公分的磷蝦維生，一口就能吞進比自己體重還多的海水，再用鯨鬚把磷蝦濾出來。</p>
+      <div class="facts">
+        <div class="fact"><b>30m</b><span>最大身長</span></div>
+        <div class="fact"><b>~180kg</b><span>心臟重量</span></div>
+        <div class="fact"><b>數噸</b><span>每日磷蝦食量</span></div>
+      </div>
+      <a class="goods" href="shop.html#p-blue">相關周邊：藍鯨深海手鍊</a>
+    </div>
+  </article>
+
+  <article class="species" id="sousa">
+    <div class="art reveal"><svg viewBox="0 0 200 90" fill="url(#g-body)" aria-hidden="true"><use href="#sym-sousa"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>中華白海豚</h3>
+      <div class="latin">Sousa chinensis</div>
+      <p>剛出生時是深灰色，長大後逐漸變成白色帶粉紅斑點，粉紅色來自皮膚下的血管。台灣西部沿岸的族群被稱為「台灣白海豚」，只生活在近岸淺水，是極度瀕危的族群。</p>
+      <div class="facts">
+        <div class="fact"><b>2～3m</b><span>成體身長</span></div>
+        <div class="fact"><b>不到 70 隻</b><span>台灣白海豚估計數量</span></div>
+        <div class="fact"><b>極危</b><span>IUCN 瀕危等級</span></div>
+      </div>
+      <a class="goods" href="shop.html#p-whitedolphin">相關周邊：白海豚粉晶手鍊</a>
+    </div>
+  </article>
+</section>
+
+<!-- 暮光帶 → 午夜帶 -->
+<section class="zone" id="midnight" data-depth="800" data-depth-end="1500">
+  <div class="zone-label">1000m</div>
+  <div class="drift-whale" id="driftWhale" aria-hidden="true"><svg viewBox="0 0 320 110" aria-hidden="true"><use href="#sym-sperm"/></svg></div>
+  <div class="zone-head reveal">
+    <h2>午夜帶：光，到這裡就消失了</h2>
+    <p>水溫只剩幾度，水壓是海面的一百倍。只有少數鯨豚能潛到這裡，靠聲音在黑暗中狩獵。</p>
+  </div>
+
+  <article class="species" id="sperm">
+    <div class="art reveal"><svg viewBox="0 0 320 110" fill="url(#g-deep)" aria-hidden="true"><use href="#sym-sperm"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>抹香鯨</h3>
+      <div class="latin">Physeter macrocephalus</div>
+      <p>擁有動物界最大的大腦。巨大的方形頭部裡充滿鯨蠟，能發出極強的「喀噠」聲作為聲納，在漆黑的深海中尋找大王魷魚。</p>
+      <div class="facts">
+        <div class="fact"><b>2000m</b><span>可下潛深度</span></div>
+        <div class="fact"><b>~8kg</b><span>大腦重量</span></div>
+        <div class="fact"><b>1 小時+</b><span>單次潛水時間</span></div>
+      </div>
+      <a class="goods" href="shop.html#p-tote">相關周邊：抹香鯨帆布袋</a>
+    </div>
+  </article>
+</section>
+
+<!-- 深淵 -->
+<section class="zone" id="abyss" data-depth="2992">
+  <div class="zone-label">2992m</div>
+  <div class="zone-head reveal">
+    <h2>深淵：哺乳類的極限</h2>
+    <p>在只剩生物冷光的黑暗裡，移動滑鼠看看四周。</p>
+  </div>
+  <article class="species flip" id="beaked">
+    <div class="art reveal"><svg viewBox="0 0 260 90" fill="url(#g-deep)" aria-hidden="true"><use href="#sym-beaked"/></svg></div>
+    <div class="sp-text reveal d1">
+      <h3>柯氏喙鯨</h3>
+      <div class="latin">Ziphius cavirostris</div>
+      <p>目前已知潛得最深、閉氣最久的哺乳動物。牠們極少浮出水面，人類對牠們的了解仍然很少，許多習性至今是謎。</p>
+      <div class="facts">
+        <div class="fact"><b>2,992m</b><span>最深下潛紀錄</span></div>
+        <div class="fact"><b>222 分</b><span>最長閉氣紀錄</span></div>
+        <div class="fact"><b>極少</b><span>被人類目擊</span></div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- 台灣 -->
+<section class="zone" id="taiwan" data-depth="2992">
+  <div class="zone-head reveal">
+    <h2>台灣鯨豚：我們的海，有超過 30 種鯨豚</h2>
+    <p>台灣東部陸棚狹窄、海底急遽變深，黑潮帶來豐富的食物，讓鯨豚離岸邊很近。點選地圖上的光點看看。</p>
+  </div>
+  <div class="taiwan">
+    <div class="map reveal">
+      <svg viewBox="0 0 225 310" role="img" aria-label="台灣賞鯨熱點地圖">
+        <text x="189" y="258" text-anchor="middle">太平洋</text>
+        <text x="4" y="43">台灣海峽</text>
+        <!-- 海岸線：Natural Earth 1:10m 資料，等距圓柱投影（含緯度修正），比例 1:1 -->
+        <path class="land" d="M201.4,38.8 195.8,45.4 194.9,46.9 194.4,48.9 193.8,51.1 193.5,53.4 193.8,55.6 194.6,60.3 194.6,61.4 194.1,62.6 194.4,65.0 195.2,66.8 197.2,68.1 199.5,68.4 199.5,69.0 198.6,68.8 197.8,69.0 196.9,69.3 196.3,69.7 197.2,71.1 197.5,73.0 197.2,74.8 195.5,75.8 195.2,76.5 195.5,77.4 196.1,78.1 196.3,79.0 195.5,79.7 193.5,80.7 191.5,83.2 191.5,84.1 191.5,86.2 191.2,87.0 191.0,87.7 190.7,88.6 190.4,90.5 190.4,91.0 190.1,91.5 189.8,91.8 190.1,92.3 190.4,92.6 190.7,93.1 191.0,93.5 191.0,93.8 190.4,94.5 188.7,96.3 187.0,98.7 185.6,99.9 185.0,100.5 185.3,101.1 185.0,101.5 183.0,103.1 182.2,103.8 181.3,105.6 180.5,109.2 178.5,112.5 177.9,113.8 177.9,115.1 178.5,116.7 179.0,117.5 179.3,117.8 179.6,118.2 179.6,119.1 179.3,120.2 178.2,122.0 177.9,123.0 177.9,124.9 176.8,129.7 175.1,134.9 172.5,146.8 171.1,149.7 167.7,169.0 166.6,176.9 165.7,178.3 163.7,181.2 162.9,182.7 162.3,184.6 161.7,187.9 161.7,190.9 161.4,193.9 160.0,196.9 159.5,197.5 158.0,198.5 157.5,199.2 157.2,200.0 156.6,201.7 155.2,204.2 154.4,208.1 153.5,210.0 150.7,214.3 150.1,215.2 146.1,218.7 145.0,219.8 145.0,220.7 145.0,222.6 145.0,223.5 144.7,224.3 144.1,225.4 142.7,227.3 141.3,228.6 136.5,231.9 133.1,235.4 132.2,235.8 131.7,236.7 130.2,240.8 129.4,242.2 126.8,245.3 126.0,247.1 125.4,250.8 124.0,255.9 121.2,260.9 120.6,262.7 120.3,267.5 120.3,272.0 120.6,287.7 120.0,289.8 119.2,291.6 118.3,292.3 117.2,293.5 117.2,296.1 117.5,298.8 117.5,300.6 116.1,298.6 114.1,297.0 111.8,295.9 109.2,295.4 109.2,297.2 108.7,298.0 107.5,297.8 106.4,296.8 106.4,296.1 106.7,294.1 105.0,291.1 105.0,290.4 105.0,289.8 105.0,288.8 105.0,285.6 105.3,284.6 106.1,283.6 106.1,282.7 100.2,267.0 99.6,266.2 97.9,264.1 96.8,261.1 96.2,260.2 93.6,258.3 92.8,257.7 92.5,257.6 91.9,257.5 91.7,256.3 91.7,255.9 90.2,255.0 87.4,253.5 86.0,252.7 84.6,251.4 83.7,250.9 82.9,250.5 82.6,250.6 82.0,250.8 81.2,250.8 77.5,247.7 73.8,242.5 77.5,247.1 77.2,245.0 76.3,243.8 76.0,242.8 74.3,240.9 71.5,238.4 70.7,237.1 70.1,235.7 70.7,234.4 71.2,233.1 70.7,231.3 69.8,229.6 68.4,227.3 67.0,224.2 66.7,222.9 66.7,222.0 67.3,220.9 67.3,220.1 67.0,219.8 66.7,219.6 66.4,219.1 66.1,218.4 65.3,216.9 65.0,216.4 64.4,212.3 64.1,210.4 63.6,209.2 62.4,208.1 63.8,207.1 64.7,205.2 64.4,203.7 62.4,203.4 62.1,204.0 61.9,205.0 61.3,205.8 60.2,205.8 59.9,205.0 59.9,203.0 59.6,202.3 58.5,201.7 57.9,202.3 57.3,203.1 56.5,203.4 55.6,202.7 55.3,201.6 55.6,200.5 55.9,199.8 56.8,199.4 57.9,199.2 58.7,198.9 59.0,198.1 58.7,197.6 55.9,196.9 55.9,196.3 58.2,196.3 57.9,195.5 56.8,194.4 55.9,193.4 56.2,192.3 56.8,191.8 57.6,191.5 58.2,190.8 57.9,189.5 57.3,188.6 57.6,187.8 58.2,186.6 58.7,185.9 58.7,185.1 58.7,184.4 59.9,181.8 60.2,181.2 61.0,181.1 59.9,180.3 60.4,179.0 61.6,179.0 62.4,178.6 63.0,178.8 62.7,177.7 62.1,178.2 61.6,178.0 60.7,178.0 60.7,177.0 61.6,175.4 62.7,175.3 64.1,175.3 63.0,172.2 61.9,169.7 62.4,168.6 62.4,168.0 61.6,167.6 61.6,167.1 62.1,166.4 62.4,165.7 63.6,164.1 61.0,164.2 61.0,161.6 62.4,160.2 62.4,155.2 62.4,151.6 63.3,148.5 64.7,146.2 65.0,143.3 65.8,140.7 66.1,139.8 68.1,137.4 68.4,136.5 68.4,136.1 70.1,134.8 70.7,133.9 71.2,131.7 71.5,130.8 73.8,128.8 74.3,127.9 75.2,125.6 76.3,123.3 78.0,118.5 78.9,117.2 79.7,116.2 80.6,115.7 81.2,115.4 81.7,115.0 81.7,114.1 82.0,113.3 83.7,112.1 84.0,111.2 84.3,108.2 84.6,107.3 85.4,106.6 88.8,102.7 88.8,102.4 89.1,101.4 90.0,100.6 90.8,98.6 91.7,95.0 94.5,90.2 95.3,87.3 96.2,85.5 100.2,81.2 102.4,78.8 103.0,77.5 103.3,75.6 103.9,73.9 105.6,70.9 106.1,69.0 106.7,68.2 108.7,67.7 109.2,66.9 109.5,66.2 109.8,65.5 111.2,64.2 112.6,63.2 114.3,62.7 116.3,63.2 116.1,61.4 116.9,60.4 118.0,59.2 118.6,57.5 118.9,57.1 120.0,56.5 120.3,54.9 122.0,51.5 122.6,50.7 122.9,50.1 122.9,49.7 122.6,49.1 122.3,48.5 122.9,47.6 123.4,47.0 123.7,46.3 124.0,45.2 124.3,44.3 124.8,43.4 125.7,42.8 126.3,42.5 126.3,42.2 126.5,41.4 127.1,39.5 127.7,38.6 130.5,34.4 132.5,31.9 134.8,30.0 140.2,28.3 141.6,27.4 142.7,26.6 143.9,25.8 146.7,24.8 152.7,23.8 156.1,23.2 157.5,22.6 159.5,21.0 159.7,20.8 160.6,20.8 161.4,20.8 162.6,21.0 163.1,21.8 163.4,22.6 164.0,23.1 164.9,22.6 164.0,21.0 162.0,19.3 161.2,18.7 161.4,17.9 162.0,17.4 162.6,17.1 162.9,16.8 163.4,15.4 164.3,13.6 166.3,11.9 169.4,10.4 172.5,9.7 175.9,10.0 177.0,11.0 180.2,15.2 181.3,17.4 181.6,17.3 182.4,17.1 183.3,17.0 183.9,17.1 183.9,17.4 183.6,17.9 183.3,18.3 183.3,19.0 183.6,19.3 184.7,20.2 185.0,20.5 185.6,20.9 186.7,21.3 200.3,24.7 201.4,25.3 200.9,26.3 200.9,27.1 200.9,28.7 201.7,31.4 202.6,32.5 203.2,32.8 205.1,32.5 206.3,32.5 207.4,33.0 208.5,33.5 209.4,34.3 203.2,37.3 201.4,38.8ZM174.5,288.5 175.9,289.7 176.5,290.4 176.5,291.1 174.8,291.7 172.5,290.9 170.5,289.4 169.4,288.2 169.7,287.5 169.7,286.6 169.4,285.9 168.8,285.3 174.8,285.3 174.8,285.9 174.5,286.2 174.2,286.9 174.2,287.8 174.5,288.5ZM23.6,154.5 25.0,157.1 25.3,158.3 25.0,159.1 24.4,158.6 23.8,158.1 23.0,158.0 21.9,158.6 21.0,158.7 20.4,159.0 20.2,159.4 19.9,160.6 19.6,160.9 18.2,161.8 16.8,161.9 15.3,161.5 13.9,160.0 14.2,159.1 15.1,160.2 16.5,160.5 17.6,160.0 18.7,159.1 17.9,159.0 17.3,158.6 17.0,158.1 16.5,157.4 16.2,157.7 16.2,157.8 15.9,158.0 15.9,156.8 15.9,155.7 16.5,155.7 17.0,155.8 19.3,154.4 20.7,153.9 20.4,155.2 20.2,155.7 21.3,155.2 22.4,155.4 23.0,155.4 23.6,154.5ZM9.9,154.5 11.1,151.5 11.9,150.4 13.1,151.6 12.5,152.0 11.9,153.0 11.1,155.7 11.1,156.2 11.4,156.8 11.1,157.3 10.2,157.4 9.7,157.4 9.1,157.5 8.8,157.7 8.5,158.0 7.4,158.0 7.4,157.4 8.0,157.0 8.5,156.8 9.1,156.8 9.9,156.5 9.9,156.0 9.9,154.5ZM17.6,152.5 17.3,151.5 16.8,150.6 15.3,149.3 17.0,148.0 18.2,148.5 19.0,149.3 19.3,150.3 18.7,150.9 19.0,152.0 18.5,152.6 17.9,152.9 17.6,152.5ZM166.3,235.7 166.0,234.5 166.0,234.2 169.1,234.1 169.4,234.2 169.7,234.8 169.4,236.0 169.1,236.5 169.1,237.0 169.1,237.4 169.1,237.9 168.8,237.7 168.3,237.7 168.0,237.7 168.0,237.6 167.1,237.3 166.3,235.7ZM53.1,167.6 57.0,163.4 60.4,159.3 61.0,159.0 58.5,163.5 57.0,164.8 56.2,165.8 55.1,167.0 54.2,167.6 52.8,168.7 51.9,169.2 53.1,167.6Z"/>
+        <circle class="land" cx="204.9" cy="48.2" r="1.6"/>
+        <path d="M108,67.1 C96,83 76,113 67,129 C61,141 58.6,152 57.5,163.4 C56.4,175 54.5,186 52.8,197.8" class="route" fill="none" stroke-width="2" stroke-dasharray="3 4"/>
+        <g class="pin" data-spot="0"><circle class="ring" cx="204.9" cy="48.2" r="4"/><circle class="core" cx="204.9" cy="48.2" r="4"/></g>
+        <g class="pin" data-spot="1"><circle class="ring" cx="189.1" cy="124.7" r="4"/><circle class="core" cx="189.1" cy="124.7" r="4"/></g>
+        <g class="pin" data-spot="2"><circle class="ring" cx="169.4" cy="202.1" r="4"/><circle class="core" cx="169.4" cy="202.1" r="4"/></g>
+        <g class="pin" data-spot="3"><circle class="ring" cx="63" cy="129" r="4"/><circle class="core" cx="63" cy="129" r="4"/></g>
+      </svg>
+    </div>
+    <div class="spots">
+      <div class="spot reveal" data-spot="0" tabindex="0"><h3>宜蘭・龜山島 <small>4～10 月</small></h3><p>出港不久就能遇見大群飛旋海豚、花紋海豚，運氣好能看到抹香鯨。</p></div>
+      <div class="spot reveal d1" data-spot="1" tabindex="0"><h3>花蓮外海 <small>4～10 月</small></h3><p>台灣賞鯨的起點。常見花紋海豚、弗氏海豚，偶爾有虎鯨、偽虎鯨出沒。</p></div>
+      <div class="spot reveal d2" data-spot="2" tabindex="0"><h3>台東・成功、石梯坪 <small>4～10 月</small></h3><p>黑潮流經，飛旋海豚常在船邊跳躍旋轉，是拍照的好地點。</p></div>
+      <div class="spot reveal d3" data-spot="3" tabindex="0"><h3>西部沿岸 <small>全年</small></h3><p>台灣白海豚的家。牠們只生活在近岸淺水，數量極少，是最需要被守護的一群。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 保育 -->
+<section class="zone" id="protect" data-depth="2992">
+  <div class="zone-head reveal">
+    <h2>保育：牠們需要的，是一片安靜乾淨的海</h2>
+  </div>
+  <div class="stats">
+    <div class="stat reveal"><div class="num"><small>約</small><span data-count="90">0</span><small>種</small></div><p>全世界的鯨豚種類</p></div>
+    <div class="stat reveal d1"><div class="num"><small>不到</small><span data-count="70">0</span><small>隻</small></div><p>台灣白海豚估計數量</p></div>
+    <div class="stat reveal d2"><div class="num"><small>約</small><span data-count="10">0</span><small>隻</small></div><p>小頭鼠海豚（全球最瀕危鯨豚）</p></div>
+  </div>
+  <div class="threats">
+    <div class="threat reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v10.5a4.5 4.5 0 0 1-9 0V11"/><path d="M5 11l-2 2.5"/></svg></div><h3>漁業混獲</h3><p>被漁網纏住無法換氣，是鯨豚最大的死因之一。</p></div>
+    <div class="threat reveal d1"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></div><h3>海洋塑膠</h3><p>被誤食的塑膠會塞住胃部，讓牠們活活餓死。</p></div>
+    <div class="threat reveal d2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h3l4-4v14l-4-4H4z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 6a8 8 0 0 1 0 12"/></svg></div><h3>水下噪音</h3><p>船隻與工程噪音干擾牠們用聲音溝通、導航。</p></div>
+    <div class="threat reveal d3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5h12"/><path d="M5 5l4 4"/><path d="M17 5v5"/><path d="M15 12h4"/><path d="M3 21h8"/></svg></div><h3>棲地開發</h3><p>近岸開發壓縮了白海豚僅存的生活空間。</p></div>
+  </div>
+  <p class="note">＊數字為公開研究的概略估計，正式上線前請再核對最新資料。</p>
+</section>
+
+<!-- 商店入口 -->
+<section class="zone" data-depth="2992">
+  <div class="shop-cta reveal">
+    <h2>帶一片海洋回家</h2>
+    <p>每一條手鍊都以一種鯨豚為靈感，附上一張知識小卡。<br>部分收入將捐給鯨豚保育團體。</p>
+    <a class="btn btn-primary" href="shop.html">前往鯨豚選物店</a>
+  </div>
+  <div style="text-align:center"><button class="up" id="up">浮回海面</button></div>
+</section>
+</main>
+
+<footer>© 2026 鯨語 · 網站原型</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ocean = document.getElementById('ocean');
+  const root = document.documentElement;
+  const depthEl = document.getElementById('depth');
+  const zoneEl = document.getElementById('zone');
+  const dot = document.getElementById('dmdot');
+  const sections = [...document.querySelectorAll('[data-depth]')];
+
+  // 深度 → 海水顏色（用對數尺度，淺海變化多、深海變化少）
+  const stops = [[0,[20,98,150]],[30,[16,86,138]],[150,[11,66,112]],[500,[7,44,86]],[1000,[4,24,52]],[3000,[1,6,16]]];
+  const lg = d => Math.log10(d + 1);
+  function colorAt(d){
+    for (let i = 0; i < stops.length - 1; i++){
+      const [d0,c0] = stops[i], [d1,c1] = stops[i+1];
+      if (d <= d1){
+        const t = (lg(d) - lg(d0)) / (lg(d1) - lg(d0));
+        return `rgb(${c0.map((v,k)=>Math.round(v + (c1[k]-v)*t)).join(',')})`;
+      }
+    }
+    return 'rgb(1,6,16)';
+  }
+  function zoneName(d){
+    if (d < 5) return '海面';
+    if (d < 200) return '透光帶';
+    if (d < 1000) return '暮光帶';
+    if (d < 2900) return '午夜帶';
+    return '深淵';
+  }
+
+  let anchors = [];
+  function measure(){
+    // 每個區塊在閱讀時維持（或緩慢變化到）自己的深度，最後 25% 才過渡到下一區
+    anchors = [];
+    sections.forEach(s => {
+      const d = +s.dataset.depth, end = +(s.dataset.depthEnd ?? d);
+      anchors.push({ y: s.offsetTop, d }, { y: s.offsetTop + s.offsetHeight * 0.75, d: end });
+    });
+  }
+
+  let depth = 0;
+  function update(){
+    const y = scrollY + innerHeight * 0.5;
+    let d = 0;
+    for (let i = 0; i < anchors.length - 1; i++){
+      const a = anchors[i], b = anchors[i+1];
+      if (y >= a.y && y < b.y){
+        const t = (y - a.y) / (b.y - a.y);
+        d = a.d + (b.d - a.d) * t;
+        break;
+      }
+      if (y >= b.y) d = b.d;
+    }
+    depth = d;
+    ocean.style.background = colorAt(d);
+    root.style.setProperty('--rays', Math.max(0, 1 - d / 220).toFixed(3));
+    root.style.setProperty('--surface-glow', Math.max(0, .12 - d / 600).toFixed(3));
+    depthEl.textContent = Math.round(d).toLocaleString();
+    zoneEl.textContent = zoneName(d);
+    checkMilestone(d);
+    dot.style.top = (Math.min(1, lg(d) / lg(3000)) * 100) + '%';
+
+    // 抹香鯨剪影隨捲動漂過
+    const drift = document.getElementById('driftWhale');
+    const sec = document.getElementById('midnight');
+    const p = (scrollY + innerHeight - sec.offsetTop) / (sec.offsetHeight + innerHeight);
+    if (!reduce && p > 0 && p < 1) drift.style.transform = `translateX(${(1 - p) * 110 - 40}vw)`;
+  }
+  // 跨過特定深度時，畫面被一陣氣泡包圍，並顯示新的水層
+  const milestones = [
+    { d: 200, name: '暮光帶', en: 'Twilight zone' },
+    { d: 1000, name: '午夜帶', en: 'Midnight zone' },
+    { d: 2900, name: '深淵', en: 'The abyss' }
+  ];
+  const sunlit = { d: 0, name: '透光帶', en: 'Sunlight zone' };
+  let passed = -1, armed = false, bursting = false;
+  setTimeout(() => { armed = true; }, 900); // 剛載入或從連結跳進來時不觸發
+  function checkMilestone(d){
+    const n = milestones.filter(m => d >= m.d).length;
+    if (passed === -1 || !armed){ passed = n; return; }
+    if (n === passed) return;
+    const down = n > passed;
+    const m = down ? milestones[n - 1] : (milestones[n - 1] || sunlit);
+    passed = n;
+    if (!reduce) burst(m, down);
+  }
+  function burst(m, down){
+    if (bursting) return;
+    bursting = true;
+    const el = document.createElement('div');
+    el.className = 'burst';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = `<div class="frost"></div><div class="veil"></div><canvas></canvas><div class="label"><small>${m.en}</small><b>${down ? m.d.toLocaleString() + '<em>m</em>' : '↑'}</b><span>${down ? '進入' : '上浮至'} ${m.name}</span></div>`;
+    document.body.appendChild(el);
+
+    const c = el.querySelector('canvas'), g = c.getContext('2d');
+    const r = Math.min(1.5, devicePixelRatio || 1);
+    const w = c.width = innerWidth * r, h = c.height = innerHeight * r;
+    const sprite = bubbleSprite();
+    const N = innerWidth < 720 ? 30 : 48;
+    const list = Array.from({ length: N }, () => {
+      const s = (10 + Math.random() ** 2 * 90) * r;
+      return { x: Math.random() * w, s, dx: (Math.random() - .5) * 160 * r, dur: 1100 + Math.random() * 700, delay: Math.random() * 350, ph: Math.random() * 6.28 };
+    });
+    const t0 = performance.now(), END = 2200;
+    function tick(now){
+      const t = now - t0;
+      g.clearRect(0, 0, w, h);
+      for (const b of list){
+        const k = (t - b.delay) / b.dur;
+        if (k <= 0 || k >= 1) continue;
+        const e = k * k * (3 - 2 * k);             // 平滑加速再減速
+        const y = h + b.s - e * (h + b.s * 2 + 80 * r);
+        const x = b.x + b.dx * e + Math.sin(b.ph + k * 6) * 6 * r;
+        g.globalAlpha = k < .1 ? k * 10 : 1;
+        g.drawImage(sprite, x - b.s / 2, y - b.s / 2, b.s, b.s);
+      }
+      if (t < END) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    setTimeout(() => { el.remove(); bursting = false; }, END + 150);
+  }
+  // 氣泡圖只畫一次，之後每格只是貼圖，非常省效能
+  let spriteCache;
+  function bubbleSprite(){
+    if (spriteCache) return spriteCache;
+    const S = 128, c = document.createElement('canvas');
+    c.width = c.height = S;
+    const g = c.getContext('2d');
+    let grd = g.createRadialGradient(S / 2, S / 2, S * .2, S / 2, S / 2, S / 2);
+    grd.addColorStop(0, 'rgba(170,235,255,.04)'); grd.addColorStop(.85, 'rgba(200,245,255,.22)'); grd.addColorStop(1, 'rgba(255,255,255,.55)');
+    g.fillStyle = grd; g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 1, 0, 6.283); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 1.5; g.stroke();
+    grd = g.createRadialGradient(S * .34, S * .32, 0, S * .34, S * .32, S * .16);
+    grd.addColorStop(0, 'rgba(255,255,255,.95)'); grd.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grd; g.beginPath(); g.arc(S * .34, S * .32, S * .16, 0, 6.283); g.fill();
+    return spriteCache = c;
+  }
+
+  measure(); update();
+  const remeasure = () => { measure(); update(); };
+  addEventListener('resize', remeasure);
+  addEventListener('load', remeasure);
+  document.fonts?.ready.then(remeasure);
+  addEventListener('scroll', update, { passive: true });
+
+  // 捲動進場
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: .18 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // 數字跳動
+  const co = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, end = +el.dataset.count, t0 = performance.now();
+    const step = t => {
+      const k = Math.min(1, (t - t0) / 1600);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    reduce ? (el.textContent = end) : requestAnimationFrame(step);
+    co.unobserve(el);
+  }), { threshold: .6 });
+  document.querySelectorAll('[data-count]').forEach(el => co.observe(el));
+
+  // 台灣地圖互動
+  const pins = document.querySelectorAll('.pin'), spots = document.querySelectorAll('.spot');
+  function activate(i){
+    pins.forEach(p => p.classList.toggle('active', p.dataset.spot == i));
+    spots.forEach(s => s.classList.toggle('active', s.dataset.spot == i));
+  }
+  [...pins, ...spots].forEach(el => {
+    el.addEventListener('mouseenter', () => activate(el.dataset.spot));
+    el.addEventListener('click', () => activate(el.dataset.spot));
+    el.addEventListener('focus', () => activate(el.dataset.spot));
+  });
+
+  document.getElementById('up').addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+
+  // 粒子：淺海是氣泡，深海是海洋雪，最深處是跟著滑鼠的生物冷光
+  const cv = document.getElementById('particles'), ctx = cv.getContext('2d');
+  let W, H, dpr;
+  function size(){
+    dpr = Math.min(2, devicePixelRatio || 1);
+    W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr;
+    cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+  }
+  size(); addEventListener('resize', size);
+  const rnd = (a,b) => a + Math.random() * (b - a);
+  // 粒子盡量分布在畫面左右兩側（約 9 成落在兩側 25% 的範圍），中間留給文字
+  const sideX = () => Math.random() < .9 ? (Math.random() < .5 ? rnd(0, .25) : rnd(.75, 1)) : rnd(0, 1);
+  // 氣泡上升速度：約 80% 維持一致（只有極小差異），其餘 20% 隨機快慢
+  const BUBBLE_SPEED = .00025;
+  const bubbleSpeed = () => Math.random() < .8 ? BUBBLE_SPEED * rnd(.92, 1.08) : BUBBLE_SPEED * rnd(.4, 1.8);
+  const bubbles = Array.from({ length: 20 }, () => ({ x: sideX(), y: rnd(0,1), r: rnd(1.5,8), s: bubbleSpeed(), w: rnd(0,6.28) }));
+  const snow = Array.from({ length: 33 }, () => ({ x: sideX(), y: rnd(0,1), r: rnd(.6,2), s: rnd(.000025,.00008), w: rnd(0,6.28) }));
+  // 淺海的小魚群
+  const schools = Array.from({ length: 3 }, (_, k) => ({
+    x: rnd(0,1), y: .25 + k * .22, s: rnd(.000015,.000025), w: rnd(0,6.28),
+    fish: Array.from({ length: 4 }, () => ({ dx: rnd(-70,70), dy: rnd(-30,30), p: rnd(0,6.28), z: rnd(.7,1.3) }))
+  }));
+  // 深海的冷光閃爍
+  const twinkles = Array.from({ length: 9 }, () => ({ x: sideX(), y: rnd(0,1), p: rnd(0,6.28), s: rnd(.0003,.0008), r: rnd(1,2.6) }));
+  const glows = [];
+  // 滑鼠冷光：數量為先前的 30%，只在移動時出現，停下來就很快淡出
+  const GLOW_RATE = .3, GLOW_MAX = 10, STILL_MS = 120;
+  let glowTick = 0, lastMove = -1e9;
+  addEventListener('pointermove', e => {
+    lastMove = performance.now();
+    if (depth > 700 && glows.length < GLOW_MAX && (glowTick++ % 4 === 0)) for (let i = 0; i < 3; i++)
+      if (Math.random() < GLOW_RATE)
+        glows.push({ x: e.clientX + rnd(-40,40), y: e.clientY + rnd(-40,40), life: 1, r: rnd(1.5,4), vx: rnd(-.4,.4), vy: rnd(-.5,.2) });
+  });
+  function drawFish(x, y, z, flap, a){
+    ctx.save(); ctx.translate(x, y); ctx.scale(z * dpr, z * dpr);
+    ctx.fillStyle = `rgba(6,40,72,${a})`;
+    ctx.beginPath(); ctx.ellipse(0, 0, 7, 2.6, 0, 0, 6.283); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(11, -3 + flap); ctx.lineTo(11, 3 + flap); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  let last = performance.now();
+  function frame(t){
+    const dt = Math.min(50, t - last); last = t;
+    // 轉場時背景粒子暫停，讓毛玻璃底下的畫面保持靜止，模糊不必每格重算
+    if (bursting){ requestAnimationFrame(frame); return; }
+    ctx.clearRect(0, 0, W, H);
+    const bubA = Math.max(0, 1 - depth / 400), snowA = Math.min(1, Math.max(0, (depth - 250) / 500));
+    const fishA = Math.max(0, 1 - depth / 260), deepA = Math.min(1, Math.max(0, (depth - 700) / 600));
+    if (fishA > 0) for (const sc of schools){
+      sc.x -= sc.s * dt; sc.w += .0003 * dt;
+      if (sc.x < -.2){ sc.x = 1.2; sc.y = rnd(.15,.85); }
+      const bx = sc.x * W, by = (sc.y + Math.sin(sc.w) * .03) * H;
+      for (const f of sc.fish){
+        f.p += .006 * dt;
+        drawFish(bx + f.dx * dpr + Math.sin(f.p * .3) * 4 * dpr, by + f.dy * dpr + Math.cos(f.p * .25) * 3 * dpr, f.z, Math.sin(f.p) * 1.6, .5 * fishA);
+      }
+    }
+    if (deepA > 0) for (const s of twinkles){
+      s.p += s.s * dt;
+      const a = deepA * Math.max(0, Math.sin(s.p)) ** 3;
+      if (a < .02) continue;
+      const x = s.x * W, y = s.y * H, R = s.r * 6 * dpr;
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, R);
+      grd.addColorStop(0, `rgba(140,255,230,${a})`); grd.addColorStop(1, 'rgba(140,255,230,0)');
+      ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.283); ctx.fill();
+    }
+    if (bubA > 0) for (const b of bubbles){
+      b.y -= b.s * dt; b.w += .0006 * dt;
+      if (b.y < -.05){ b.y = 1.05; b.x = sideX(); }
+      const x = (b.x + Math.sin(b.w) * .006) * W, y = b.y * H;
+      ctx.beginPath(); ctx.arc(x, y, b.r * dpr, 0, 6.283);
+      ctx.strokeStyle = `rgba(255,255,255,${.45 * bubA})`; ctx.lineWidth = dpr; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x - b.r * .35 * dpr, y - b.r * .35 * dpr, b.r * .25 * dpr, 0, 6.283);
+      ctx.fillStyle = `rgba(255,255,255,${.6 * bubA})`; ctx.fill();
+    }
+    if (snowA > 0) for (const s of snow){
+      s.y += s.s * dt; s.w += .0004 * dt;
+      if (s.y > 1.02){ s.y = -.02; s.x = sideX(); }
+      ctx.beginPath(); ctx.arc((s.x + Math.sin(s.w) * .01) * W, s.y * H, s.r * dpr, 0, 6.283);
+      ctx.fillStyle = `rgba(220,240,255,${.55 * snowA})`; ctx.fill();
+    }
+    const still = t - lastMove > STILL_MS;
+    for (let i = glows.length - 1; i >= 0; i--){
+      const g = glows[i];
+      g.life -= dt / (still ? 200 : 3600); g.x += g.vx * .5; g.y += g.vy * .5;
+      if (g.life <= 0){ glows.splice(i, 1); continue; }
+      const grd = ctx.createRadialGradient(g.x*dpr, g.y*dpr, 0, g.x*dpr, g.y*dpr, g.r * 5 * dpr);
+      grd.addColorStop(0, `rgba(127,240,255,${g.life})`); grd.addColorStop(1, 'rgba(127,240,255,0)');
+      ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(g.x*dpr, g.y*dpr, g.r * 5 * dpr, 0, 6.283); ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  if (!reduce) requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
